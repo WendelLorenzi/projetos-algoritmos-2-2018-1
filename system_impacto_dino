@@ -1,0 +1,110 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>	//Biblioteca necessária para usar o sleep
+#include <time.h>
+
+#define LINHA 10
+#define COLUNA 80
+
+int main(int argc, char const *argv[])
+{
+	system("cls"); //Comando para limpar a tela
+	int i, j, mx, my, obsx, obsy, verif, impx,impy;
+
+	verif = 0; //Está variável será usada para verificação de impacto nas colunas da matriz
+
+	//Posição do "obstáculo" passada por parâmetros
+	obsy = atoi(argv[1]);
+	obsx = atoi(argv[2]);
+
+	//Declarando a matriz na qual será trabalhado o desenvolvimento
+	int **matriz = malloc(LINHA * sizeof(int));
+	for(i = 0; i < LINHA; i++){
+		matriz[i] = malloc(COLUNA * sizeof(int));
+	}
+
+	//Iniciando a matriz com 0's
+	for(i = 0; i < LINHA; i++){
+		for(j = 0; j < COLUNA; j++){
+			matriz[i][j] = 0;
+		}
+	}
+	
+	//Posicionando o obstáculo
+	matriz[obsy][obsx] = 1;
+
+	//Imprimindo a matriz ordenadamente
+	for(i = 0; i < LINHA; i++){
+		printf("\n");
+		for(j = 0; j < COLUNA; j++){
+			printf("%i ", matriz[i][j]);
+		}
+	}
+	sleep(1);
+	
+	system("cls");
+
+	//Programando linha que vai percorrer a matriz
+	for(i = 0; i < LINHA; i++){
+			matriz[i][0] = 1;			
+	}
+
+	//Imprimindo a matriz ordenadamente
+	for(i = 0; i < LINHA; i++){
+		printf("\n");
+		for(j = 0; j < COLUNA; j++){
+			printf("%i ", matriz[i][j]);
+		}
+	}
+	sleep(1);
+
+	//Percorrer primeiro as linhas torna mais fácil
+	for(i = 1; i < COLUNA; i++){
+		for(j = 0; j < LINHA; j++){
+			//O 2 será mantido no lugar
+			if(matriz[j][i - 1] != 2){
+				matriz[j][i - 1] = 0;
+			}
+			//Onde houver impacto será colocado 2 ao invés de 1
+			if(matriz[j][i] != 0){
+				matriz[j][i] = 2;
+			}else{
+				matriz[j][i] = 1;
+			}
+		}
+
+		//Verificando se houve impacto na coluna atual
+		for(j = 0; j < LINHA; j++){
+			if(matriz[j][i] == 2){
+				verif = 1;
+				impx = i;
+				impy = j;
+			}
+		}
+
+
+		//Imprimindo a cada movimento
+		system("cls");
+		
+		for(my = 0; my < LINHA; my++){
+			printf("\n");
+			for(mx = 0; mx < COLUNA; mx++){
+				printf("%i ", matriz[my][mx]);
+			}
+		}
+		sleep(1);
+
+		if(verif == 1){
+			printf("\n\nHouve um impacto em %i %i", impy, impx);
+			break;
+		}	
+	}
+
+	for(i = 0; i < LINHA; i++){
+		free(matriz[i]);
+	}
+	free(matriz);
+
+	return 0;
+}
