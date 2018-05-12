@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <windows.h> // Usada para a função gotoxy
+#include <stdlib.h>
+#include <conio.h> // Usada para a função kbhit()
+#include <time.h> // Usada para a função delay
+
+// Este função fixa o que voce quiser em determinado local do console
+void gotoxy(int x, int y);
+// Determina o tempo em milissegundos
+void delay(int timems);
+
+enum c {w, s};
+char c;
+
+int main(int argc, char const *argv[])
+{
+	int linha= 25, i, j, z, a;
+	int coluna= 0;
+
+	// Este for irá fazer com que a coisa se movimente
+	for(i= 0; i<100; i++){
+		coluna= i;
+		// Aqui será determinado a velocidade do jogo
+		delay(10);
+		// A linha é fixa e a coluna varia conforme a passagem do for
+			gotoxy(coluna, linha);
+			printf(" # ");
+			// Em construção:
+				// ira ler o que tem no buffer e armazenar na variavel c, após, iremos colocar o c em um switch/case para W
+			setbuf(stdin, NULL);
+					if (kbhit()){
+						while(kbhit() != 0){
+					c=getch();
+					setbuf(stdin, NULL);
+					switch(c){
+						case 'w': {
+							a= i + 9;
+							// este for é responsavel pelo mivimento de subida
+							for(j= 0; j<10; j++){
+								delay(10);
+							gotoxy((coluna + j), (linha - j));
+							printf(" # ");
+							// aqui irá limpar o rastro que é deixado pelo printf
+							gotoxy((coluna + j), (linha - (j - 1)));
+							printf(" ");
+							// aqui irá somar o valor maximo do for para que possa ser implementado o movimento de descida
+							if(j == 9){
+								coluna = coluna + 9;
+								linha= linha - 9;
+							}
+								if(coluna == a){
+									// este for é responsável pelo movimento de descida
+								for(z= 0; z<10; z++){
+									delay(10);
+									gotoxy((coluna + z), (linha + z));
+									printf(" # ");
+									gotoxy((coluna + z), (linha + (z - 1)));
+									printf(" ");
+									// aqui irá somar os valores para o movimento continue
+									if(z == 9){
+										linha= linha + 9;
+										coluna= coluna - 9;
+									}
+								}
+							} 
+						}
+						// aqui irá somar no i do for primeiro for para que o dinossauro não retorne na posiçao anterior ao inicio do movimento
+						i = i + 20;
+							break;
+						}
+					}
+				}
+			}
+
+					}
+	
+	return 0;
+}
+
+void gotoxy(int x, int y){
+	COORD coord;
+	coord.X= x;
+	coord.Y= y;
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+}
+
+void delay(int timems){
+	long pause;
+	clock_t now, then;
+
+	pause= timems*(CLOCKS_PER_SEC/1000);
+	now= then = clock();
+	while((now-then) < pause){
+		now= clock();
+	}
+}
